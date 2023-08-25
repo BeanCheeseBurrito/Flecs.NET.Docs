@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkflecs_net_docs=self.webpackChunkflecs_net_docs||[]).push([[4248],{7850:s=>{s.exports=JSON.parse('{"label":"hello","permalink":"/Flecs.NET-Docs/blog/tags/hello","allTagsPath":"/Flecs.NET-Docs/blog/tags","count":2}')}}]);
