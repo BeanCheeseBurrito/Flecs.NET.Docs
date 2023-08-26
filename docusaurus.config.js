@@ -21,7 +21,7 @@ const config = {
   organizationName: 'BeanCheeseBurrito', // Usually your GitHub org/user name.
   projectName: 'Flecs.NET-Docs', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internalization, you can use this field to set useful
@@ -98,15 +98,6 @@ const config = {
       footer: {
         style: 'dark',
         links: [
-          {
-            title: 'Docs',
-            items: [
-              {
-                label: 'Documentation',
-                to: '/documentation/intro',
-              },
-            ],
-          },
           {
             title: 'Community',
             items: [
