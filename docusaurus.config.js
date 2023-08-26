@@ -1,14 +1,14 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const lightCodeTheme = require('prism-react-renderer/themes/vsLight');
+const darkCodeTheme = require('prism-react-renderer/themes/vsDark');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
-  favicon: 'img/favicon.ico',
+  title: 'Flecs.NET',
+  tagline: 'A high-level C# wrapper for flecs',
+  favicon: 'https://www.flecs.dev/explorer/img/flecs_logo.png',
 
   // Set the production url of your site here
   url: 'https://your-docusaurus-test-site.com',
@@ -64,21 +64,32 @@ const config = {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
-        title: 'My Site',
+        title: 'Flecs.NET',
         logo: {
-          alt: 'My Site Logo',
-          src: 'img/logo.svg',
+          alt: 'Flecs Logo',
+          src: 'https://raw.githubusercontent.com/SanderMertens/flecs/master/docs/img/logo_small_dark.png',
+          srcDark: 'https://raw.githubusercontent.com/SanderMertens/flecs/master/docs/img/logo_small.png'
         },
         items: [
           {
             type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
+            sidebarId: 'documentation',
             position: 'left',
-            label: 'Tutorial',
+            label: 'Documentation',
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
           {
-            href: 'https://github.com/facebook/docusaurus',
+            type: 'docSidebar',
+            sidebarId: 'api',
+            position: 'left',
+            label: 'API',
+          },
+          {
+            href: 'https://www.flecs.dev/explorer/',
+            label: 'Explorer',
+            position: 'left',
+          },
+          {
+            href: 'https://github.com/BeanCheeseBurrito/Flecs.NET',
             label: 'GitHub',
             position: 'right',
           },
@@ -91,7 +102,7 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Tutorial',
+                label: 'Documentation',
                 to: '/docs/intro',
               },
             ],
@@ -100,16 +111,8 @@ const config = {
             title: 'Community',
             items: [
               {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-              },
-              {
                 label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
-              },
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/docusaurus',
+                href: 'https://discord.gg/BEzP5Rgrrp',
               },
             ],
           },
@@ -117,19 +120,16 @@ const config = {
             title: 'More',
             items: [
               {
-                label: 'Blog',
-                to: '/blog',
-              },
-              {
                 label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                href: 'https://github.com/BeanCheeseBurrito/Flecs.NET',
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} BeanCheeseBurrito. Built with Docusaurus.`,
       },
       prism: {
+        additionalLanguages: ['csharp'],
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
