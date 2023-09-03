@@ -42,7 +42,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/BeanCheeseBurrito/Flecs.NET-Docs',
         },
         blog: {
           showReadingTime: true,
@@ -62,13 +62,13 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+      image: '/img/logo.png',
       navbar: {
         title: 'Flecs.NET',
         logo: {
           alt: 'Flecs Logo',
-          src: 'https://raw.githubusercontent.com/SanderMertens/flecs/master/docs/img/logo_small_dark.png',
-          srcDark: 'https://raw.githubusercontent.com/SanderMertens/flecs/master/docs/img/logo_small.png'
+          src: '/img/logo_small_dark.png',
+          srcDark: '/img/logo_small.png'
         },
         items: [
           {
@@ -123,6 +123,11 @@ const config = {
         additionalLanguages: ['csharp'],
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
+      },
+      colorMode: {
+        defaultMode: 'dark',
+        disableSwitch: false,
+        respectPrefersColorScheme: false,
       },
     }),
 };
