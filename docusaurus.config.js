@@ -14,12 +14,12 @@ const config = {
   url: 'https://your-docusaurus-test-site.com',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/Flecs.NET-Docs/',
+  baseUrl: '/Flecs.NET.Docs/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'BeanCheeseBurrito', // Usually your GitHub org/user name.
-  projectName: 'Flecs.NET-Docs', // Usually your repo name.
+  projectName: 'Flecs.NET.Docs', // Usually your repo name.
 
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
@@ -42,7 +42,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/BeanCheeseBurrito/Flecs.NET-Docs',
+            'https://github.com/BeanCheeseBurrito/Flecs.NET.Docs',
         },
         blog: {
           showReadingTime: true,
