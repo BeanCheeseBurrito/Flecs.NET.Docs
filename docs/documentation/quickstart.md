@@ -5,7 +5,6 @@ sidebar_position: 1
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-
 # Quick Start
 This document provides a quick overview of the different features and concepts in Flecs with short examples. This is a good resource if you're just getting started or just want to get a better idea of what kind of features are available in Flecs!
 
@@ -547,7 +546,7 @@ The following examples show how to get back the elements from a pair:
 <TabItem value="C#" label="C#">
 
 ```csharp title="C#"
-if (id.IsPair()) 
+if (id.IsPair())
 {
     Entity relationship = id.First();
     Entity target = id.Second();
@@ -716,7 +715,7 @@ Entity parent = world.Entity("parent");
 Entity child = world.Entity("child").ChildOf(parent);
 Console.WriteLine(child.Path());// output: 'parent::child'
 
-world.Lookup("parent::child"); // returns child
+world.Lookup("parent.child"); // returns child
 parent.Lookup("child"); // returns child
 ```
 
@@ -768,12 +767,11 @@ Queries (see below) can use hierarchies to order data breadth-first, which can c
 
 ```csharp title="C#"
 Query q = world.Query(
-    filter: world.FilterBuilder()
-        .Term<Position>()
-        .Term<Position>().Parent().Cascade()
+    filter: world.FilterBuilder<Position, Position>()
+        .TermAt(2).Parent().Cascade()
 );
 
-q.Iter((Iter it) =>
+q.Each((ref Position p, ref Position pParent) =>
 {
     // Do the thing
 });
@@ -1079,9 +1077,8 @@ The following examples show how to query for a singleton component:
 
 ```csharp title="C#"
 world.Query(
-    filter: world.FilterBuilder()
-        .Term<Velocity>()
-        .Term<Gravity>().Singleton()
+    filter: world.FilterBuilder<Velocity, Gravity>()
+        .TermAt(2).Singleton()
 );
 ```
 
@@ -1126,21 +1123,30 @@ Filters are a kind of uncached query that are cheap to create. This makes them a
 <TabItem value="C#" label="C#">
 
 ```csharp title="C#"
-// Initialize a filter with 2 terms
+// For simple queries the each function can be used
+world.Each((ref Position p, ref Velocity v) => // Entity argument is optional
+{
+    p.x += v.x;
+    p.y += v.y;
+});
+
+// More complex filters can first be created, then iterated
 Filter f = world.Filter(
-    filter: world.FilterBuilder()
-        .Term<Position>()
-        .Term(EcsChildOf, parent)
+    filter: world.FilterBuilder<Position>()
+        .Term(Ecs.ChildOf, parent)
 );
 
-// Iterate the filter results. Because entities are grouped by their type there
-// are two loops: an outer loop for the type, and an inner loop for the entities
-// for that type.
-f.Iter((Iter it) =>
+// Option 1: Each() function that iterates each entity
+f.Each((Entity e, ref Position p) =>
 {
-    Column<Position> p = it.Field<Position>(1);
+    Console.WriteLine($"{e}: ({p.x}, {p.y})");
+});
+
+// Option 2: Iter() function that iterates each archetype
+f.Iter((Iter it, Column<Position> p) =>
+{
     foreach (int i in it)
-        Console.WriteLine($"{it.Entity(i).Name()}: ({p[i].X}, {p[i].Y})");
+        Console.WriteLine($"{it.Entity(i)}: ({p[i].X}, {p[i].Y})");
 });
 ```
 
@@ -1220,8 +1226,8 @@ The following example shows a filter that matches all entities with a parent tha
 ```csharp title="C#"
 Filter f = world.Filter(
     filter: world.FilterBuilder()
-        .Term(EcsChildOf, EcsWildcard)
-        .Term<Position>().Oper(EcsNot)
+        .Term(Ecs.ChildOf, Ecs.Wildcard)
+        .Term<Position>().Not()
 );
 
 // Iteration code is the same
@@ -1271,9 +1277,8 @@ The API for queries is similar to filters:
 ```csharp title="C#"
 // Create a query with two terms
 Query q = world.Query(
-    filter: world.FilterBuilder()
-        .Term<Position>()
-        .Term(EcsChildOf, EcsWildcard)
+    filter: world.FilterBuilder<Position>()
+        .Term(Ecs.ChildOf, Ecs.Wildcard)
 );
 
 // Iteration is the same as filters
@@ -1330,12 +1335,9 @@ A system is a query combined with a callback. Systems can be either ran manually
 ```csharp title="C#"
 // Systems are called routines in Flecs.NET
 Routine moveRoutine = world.Routine(
-    filter: world.FilterBuilder().Term<Position>().Term<Velocity>(),
-    callback: (Iter it) =>
+    filter: world.FilterBuilder<Position, Velocity>(),
+    callback: (Iter it, Column<Position> p, Column<Velocity> v) =>
     {
-        Column<Position> p = it.Field<Position>(1);
-        Column<Velocity> v = it.Field<Velocity>(2);
-
         foreach (int i in it)
         {
             p[i].X += v[i].X * it.DeltaTime();
@@ -1410,8 +1412,8 @@ Systems are stored as entities with an `EcsSystem` component (`flecs::System` in
 <TabItem value="C#" label="C#">
 
 ```csharp title="C#"
-Console.WriteLine("Routine: " + moveRoutine.Entity.Name());
-moveRoutine.Entity.Add(EcsOnUpdate);
+Console.WriteLine($"Routine: {moveRoutine}");
+moveRoutine.Entity.Add(Ecs.OnUpdate);
 moveRoutine.Entity.Destruct();
 ```
 
@@ -1447,14 +1449,14 @@ A pipeline is a list of tags that when matched, produces a list of systems to ru
 <TabItem value="C#" label="C#">
 
 ```csharp title="C#"
-EcsOnLoad
-EcsPostLoad
-EcsPreUpdate
-EcsOnUpdate
-EcsOnValidate
-EcsPostUpdate
-EcsPreStore
-EcsOnStore
+Ecs.OnLoad
+Ecs.PostLoad
+Ecs.PreUpdate
+Ecs.OnUpdate
+Ecs.OnValidate
+Ecs.PostUpdate
+Ecs.PreStore
+Ecs.OnStore
 ```
 
 </TabItem>
@@ -1500,23 +1502,23 @@ When a pipeline is executed, systems are ran in the order of the phases. This ma
 ```csharp title="C#"
 world.Routine(
     name: "Move",
-    filter: world.FilterBuilder().Term<Position>().Term<Velocity>(),
-    routine: world.RoutineBuilder().Kind(EcsOnUpdate),
-    callback: it => { ... }
+    filter: world.FilterBuilder<Position, Velocity>(),
+    routine: world.RoutineBuilder().Kind(Ecs.OnUpdate),
+    callback: (Iter it) => { ... }
 );
 
 world.Routine(
     name: "Transform",
-    filter: world.FilterBuilder().Term<Position>().Term<Transform>(),
-    routine: world.RoutineBuilder().Kind(EcsPostUpdate),
-    callback: it => { ... }
+    filter: world.FilterBuilder<Position, Transform>(),
+    routine: world.RoutineBuilder().Kind(Ecs.PostUpdate),
+    callback: (Iter it) => { ... }
 );
 
 world.Routine(
     name: "Render",
-    filter: world.FilterBuilder().Term<Transform>().Term<Mesh>(),
-    routine: world.RoutineBuilder().Kind(EcsOnStore),
-    callback: it => { ... }
+    filter: world.FilterBuilder<Transform, Mesh>(),
+    routine: world.RoutineBuilder().Kind(Ecs.OnStore),
+    callback: (Iter it) => { ... }
 );
 
 world.Progress();
@@ -1556,8 +1558,8 @@ Because phases are just tags that are added to systems, applications can use the
 <TabItem value="C#" label="C#">
 
 ```csharp title="C#"
-moveRoutine.Entity.Add(EcsOnUpdate);
-moveRoutine.Entity.Remove(EcsPostUpdate);
+moveRoutine.Entity.Add(Ecs.OnUpdate);
+moveRoutine.Entity.Remove(Ecs.PostUpdate);
 ```
 
 </TabItem>
@@ -1598,9 +1600,9 @@ An example of an observer with two components:
 ```csharp title="C#"
 world.Observer(
     name: "OnSetPosition",
-    filter: world.FilterBuilder().Term<Position>().Term<Velocity>(),
-    observer: world.ObserverBuilder().Event(EcsOnSet),
-    callback: it => { ... }
+    filter: world.FilterBuilder<Position, Velocity>(),
+    observer: world.ObserverBuilder().Event(Ecs.OnSet),
+    callback: (Iter it) => { ... }
 );
 
 Entity e = world.Entity();
